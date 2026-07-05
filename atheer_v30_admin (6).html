@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أثير — لوحة الإدارة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Tajawal',system-ui,sans-serif;background:#F7F4EF;color:#1A1410;min-height:100vh;direction:rtl;font-size:16px;line-height:1.6;}
+:root{
+  --gold:#B8860B;--gold-dim:rgba(184,134,11,0.10);--gold-border:rgba(184,134,11,0.30);
+  --dark:#F7F4EF;--dark2:#EEEAE2;--dark3:#E5E0D6;--dark4:#D9D3C7;
+  --surface:#FFFFFF;--surface2:#F0EDE7;
+  --text:#1A1410;--text2:#5A4A30;--text3:#9A8A70;
+  --border:rgba(100,80,40,0.15);
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;--transition:0.22s ease;
+  --green:#2E7D32;--orange:#E65100;
+}
+#app{display:flex;flex-direction:column;min-height:100vh;}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeIn 0.25s ease;}
+.screen.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:rgba(247,244,239,0.97);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar-logo{font-size:22px;color:var(--gold);font-weight:300;letter-spacing:3px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.btn-icon{width:38px;height:38px;border-radius:var(--radius-sm);background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:var(--transition);}
+.btn-icon:hover{border-color:var(--gold);color:var(--gold);}
+.avatar-btn{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:var(--transition);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--radius-sm);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:var(--transition);text-decoration:none;white-space:nowrap;}
+.btn-gold{background:var(--gold);color:#fff;}
+.btn-gold:hover{background:#9A6F00;transform:translateY(-1px);}
+.btn-outline{background:transparent;border:0.5px solid var(--gold-border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-dark{background:var(--dark3);border:0.5px solid var(--border);color:var(--text);}
+.btn-dark:hover{border-color:var(--gold);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-lg{padding:14px 28px;font-size:15px;}
+.btn-full{width:100%;justify-content:center;}
+.btn-white{background:#fff;border:1px solid var(--border);color:var(--text);font-size:15px;padding:13px 20px;border-radius:12px;justify-content:center;gap:12px;}
+.btn-white:hover{border-color:var(--gold-border);background:#faf8f5;}
+.btn-apple{background:#000;color:#fff;font-size:15px;padding:13px 20px;border-radius:12px;justify-content:center;gap:10px;}
+.btn-apple:hover{background:#222;}
+
+/* CARDS */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:var(--transition);}
+.card:hover{border-color:var(--gold-border);}
+.card-body{padding:16px 18px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+.badge-gold{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+.badge-green{background:rgba(46,125,50,0.12);color:#1B5E20;border:1px solid rgba(46,125,50,0.25);}
+.badge-orange{background:rgba(230,81,0,0.12);color:#BF360C;border:1px solid rgba(230,81,0,0.2);}
+.badge-purple{background:rgba(74,20,140,0.10);color:#4A148C;border:1px solid rgba(74,20,140,0.2);}
+.badge-red{background:rgba(183,28,28,0.10);color:#B71C1C;border:1px solid rgba(183,28,28,0.2);}
+.stars{color:var(--gold);font-size:13px;letter-spacing:1px;}
+.divider{border:none;border-top:0.5px solid var(--border);margin:16px 0;}
+
+/* SECTION HEAD */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.section-title{font-size:17px;font-weight:500;color:var(--text);}
+.section-sub{font-size:13px;color:var(--text2);}
+
+/* FORMS */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--dark3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:var(--transition);direction:rtl;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:var(--dark4);}
+.form-input::placeholder{color:var(--text3);}
+.form-select option{background:var(--surface);}
+.form-textarea{resize:vertical;min-height:90px;}
+
+/* CHIP FILTER */
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.chip{padding:7px 16px;border-radius:20px;background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:var(--transition);flex-shrink:0;}
+.chip:hover,.chip.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold);}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:20px;}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:18px;pointer-events:none;}
+.search-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 44px 12px 16px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;transition:var(--transition);}
+.search-input:focus{border-color:var(--gold-border);}
+.search-input::placeholder{color:var(--text3);}
+
+/* SEARCH DROPDOWN */
+.search-dropdown{position:absolute;top:calc(100% + 4px);right:0;left:0;background:var(--surface);border:0.5px solid var(--gold-border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,0.10);z-index:300;overflow:hidden;display:none;}
+.search-dropdown.open{display:block;}
+.search-drop-section{padding:8px 0;}
+.search-drop-label{font-size:11px;color:var(--text3);padding:4px 14px 6px;letter-spacing:0.5px;font-weight:500;}
+.search-drop-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:var(--transition);}
+.search-drop-item:hover{background:var(--gold-dim);}
+.search-drop-icon{width:32px;height:32px;border-radius:var(--radius-sm);background:var(--dark3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:15px;flex-shrink:0;}
+.search-drop-name{font-size:14px;color:var(--text);font-weight:500;}
+.search-drop-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.search-drop-city{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border);margin-right:auto;flex-shrink:0;}
+.search-drop-divider{height:0.5px;background:var(--border);margin:0 14px;}
+.search-drop-empty{padding:16px 14px;font-size:13px;color:var(--text3);text-align:center;}
+
+/* ===========================
+   PAYMENT MODAL (بعد قبول العرض)
+   =========================== */
+.pay-modal-overlay{position:fixed;inset:0;background:rgba(26,20,16,0.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn 0.2s ease;}
+.pay-modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:28px 22px 40px;width:100%;max-width:500px;animation:slideUp 0.28s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.pay-modal-handle{width:40px;height:4px;border-radius:2px;background:var(--dark4);margin:0 auto 20px;}
+.pay-modal-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px;text-align:center;}
+.pay-modal-sub{font-size:13px;color:var(--text3);text-align:center;margin-bottom:20px;}
+.pay-modal-phot{display:flex;align-items:center;gap:12px;background:var(--gold-dim);border:0.5px solid var(--gold-border);border-radius:var(--radius);padding:12px 14px;margin-bottom:18px;}
+.pay-modal-phot-icon{width:42px;height:42px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pay-modal-phot-name{font-size:14px;font-weight:600;color:var(--text);}
+.pay-modal-phot-detail{font-size:12px;color:var(--text2);margin-top:2px;}
+.pay-modal-summary{background:var(--dark2);border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;display:flex;flex-direction:column;gap:8px;}
+.pay-modal-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text2);}
+.pay-modal-row.total{font-size:15px;font-weight:700;color:var(--text);border-top:0.5px solid var(--border);padding-top:10px;margin-top:2px;}
+.pay-modal-row.total span:last-child{color:var(--gold);}
+.pay-modal-methods{display:flex;gap:8px;margin-bottom:18px;}
+.pay-modal-method{flex:1;padding:10px 8px;border-radius:var(--radius-sm);background:var(--dark3);border:1.5px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:var(--transition);font-size:11px;color:var(--text2);}
+.pay-modal-method.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold);}
+.pay-modal-method i{font-size:20px;}
+.pay-modal-btns{display:flex;gap:10px;}
+.pay-modal-btns .btn{flex:1;justify-content:center;}
+
+/* ===========================
+   CANCEL MODAL
+   =========================== */
+.cancel-modal-overlay{position:fixed;inset:0;background:rgba(26,20,16,0.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease;}
+.cancel-modal-box{background:var(--surface);border-radius:var(--radius-lg);padding:28px 22px;width:100%;max-width:360px;text-align:center;}
+.cancel-modal-icon{width:56px;height:56px;border-radius:50%;background:rgba(183,28,28,0.10);border:1px solid rgba(183,28,28,0.2);color:#B71C1C;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.cancel-modal-title{font-size:17px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.cancel-modal-msg{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+.cancel-modal-notice{font-size:12px;color:#BF360C;background:rgba(230,81,0,0.08);border:0.5px solid rgba(230,81,0,0.2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:20px;text-align:right;display:flex;align-items:flex-start;gap:7px;}
+.cancel-modal-btns{display:flex;gap:10px;}
+.btn-danger{background:#B71C1C;color:#fff;border:none;}
+.btn-danger:hover{background:#8B0000;transform:translateY(-1px);}
+
+/* SUPPORT SCREEN */
+#support{padding-bottom:80px;}
+.support-hero{background:var(--gold-dim);border-bottom:0.5px solid var(--gold-border);padding:24px 20px 28px;text-align:center;}
+.support-hero-icon{width:64px;height:64px;border-radius:50%;background:var(--gold);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.support-hero-title{font-size:20px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.support-hero-sub{font-size:14px;color:var(--text2);line-height:1.6;}
+.support-content{padding:20px 20px 0;}
+.support-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+.support-card-header{padding:14px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;}
+.support-card-title{font-size:15px;font-weight:500;color:var(--text);}
+.support-channel-row{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:var(--transition);border-bottom:0.5px solid var(--border);}
+.support-channel-row:last-child{border-bottom:none;}
+.support-channel-row:hover{background:var(--dark2);}
+.support-channel-icon{width:42px;height:42px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.support-channel-info{flex:1;}
+.support-channel-name{font-size:14px;font-weight:500;color:var(--text);}
+.support-channel-desc{font-size:12px;color:var(--text3);margin-top:2px;}
+.support-channel-badge{font-size:11px;padding:3px 10px;border-radius:20px;}
+.faq-item{border-bottom:0.5px solid var(--border);}
+.faq-item:last-child{border-bottom:none;}
+.faq-q{padding:14px 16px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:var(--transition);}
+.faq-q:hover{color:var(--gold);}
+.faq-q i.arrow{font-size:16px;color:var(--text3);transition:transform 0.2s;}
+.faq-q.open i.arrow{transform:rotate(90deg);color:var(--gold);}
+.faq-a{font-size:13px;color:var(--text2);line-height:1.7;padding:0 16px 14px;display:none;}
+.faq-a.open{display:block;}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.page{max-width:960px;margin:0 auto;padding:28px 20px 60px;flex:1;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(247,244,239,0.97);backdrop-filter:blur(16px);border-top:0.5px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 14px;z-index:200;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 8px;transition:var(--transition);min-width:56px;}
+.nav-icon-wrap{position:relative;width:44px;height:44px;border-radius:12px;background:var(--dark3);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;transition:var(--transition);}
+.nav-item i{font-size:20px;color:var(--text3);transition:var(--transition);}
+.nav-item span{font-size:11px;color:var(--text3);transition:var(--transition);font-weight:500;}
+.nav-item.active .nav-icon-wrap{background:var(--gold-dim);border-color:var(--gold-border);}
+.nav-item.active i,.nav-item.active span{color:var(--gold);}
+.nav-item:hover .nav-icon-wrap{border-color:var(--gold-border);}
+.nav-item:hover i,.nav-item:hover span{color:var(--text2);}
+.nav-badge{position:absolute;top:-5px;left:-5px;width:16px;height:16px;border-radius:50%;background:var(--gold);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--dark);}
+
+/* =============================
+   LOGIN SCREEN
+   ============================= */
+#login{background:var(--dark);justify-content:center;align-items:center;padding:0;}
+.login-wrap{width:100%;max-width:420px;margin:auto;padding:40px 28px;display:flex;flex-direction:column;gap:0;}
+.login-logo{text-align:center;margin-bottom:36px;}
+.login-logo-ar{font-size:56px;font-weight:300;color:var(--gold);letter-spacing:6px;display:block;line-height:1;}
+.login-logo-en{font-size:13px;letter-spacing:5px;color:var(--text3);display:block;margin-top:6px;font-weight:300;}
+.login-sep{width:36px;height:0.5px;background:var(--gold-border);margin:20px auto;}
+.login-tagline{font-size:16px;color:var(--text2);text-align:center;font-weight:300;line-height:1.7;margin-bottom:36px;}
+.login-role-label{font-size:13px;color:var(--text2);text-align:center;margin-bottom:14px;}
+.role-toggle{display:flex;background:var(--dark3);border:0.5px solid var(--border);border-radius:10px;padding:4px;margin-bottom:32px;gap:4px;}
+.role-btn{flex:1;padding:10px;text-align:center;border-radius:7px;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:var(--transition);}
+.role-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.login-divider{display:flex;align-items:center;gap:12px;margin:24px 0;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:0.5px;background:var(--border);}
+.login-divider span{font-size:12px;color:var(--text3);}
+.login-footer{text-align:center;margin-top:24px;font-size:13px;color:var(--text3);}
+.login-footer span{color:var(--gold);cursor:pointer;}
+.login-footer span:hover{text-decoration:underline;}
+.login-role-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;margin:0 auto 28px;display:flex;justify-content:center;}
+.login-role-badge.client{background:rgba(184,134,11,0.10);color:var(--gold);border:1px solid var(--gold-border);}
+.login-role-badge.photographer{background:rgba(74,20,140,0.08);color:#6A1B9A;border:1px solid rgba(74,20,140,0.2);}
+
+/* =============================
+   SPLASH
+   ============================= */
+#splash{background:var(--dark);justify-content:center;align-items:center;text-align:center;padding:40px 24px;}
+.splash-logo-ar{font-size:72px;font-weight:300;color:var(--gold);letter-spacing:8px;display:block;line-height:1;}
+.splash-logo-en{font-size:16px;letter-spacing:6px;color:var(--text3);display:block;margin-top:8px;font-weight:300;}
+.splash-separator{width:40px;height:0.5px;background:var(--gold-border);margin:28px auto;}
+.splash-tagline{font-size:20px;color:var(--text2);font-weight:300;line-height:1.8;}
+.splash-tagline strong{color:var(--text);font-weight:500;}
+.splash-actions{margin-top:52px;display:flex;flex-direction:column;gap:12px;max-width:320px;width:100%;margin-left:auto;margin-right:auto;}
+
+/* =============================
+   HOME
+   ============================= */
+#home{padding-bottom:80px;}
+.home-hero{background:var(--dark2);border-bottom:0.5px solid var(--border);padding:24px 24px 28px;}
+.home-hero-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+.home-greeting{font-size:13px;color:var(--text2);margin-bottom:2px;}
+.home-heading{font-size:22px;font-weight:500;color:var(--text);}
+.city-selector{display:flex;align-items:center;gap:6px;background:var(--dark3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;cursor:pointer;font-size:13px;color:var(--text2);transition:var(--transition);}
+.city-selector:hover{border-color:var(--gold-border);color:var(--gold);}
+.home-content{padding:24px 20px 0;}
+.home-stats{display:flex;gap:10px;margin-bottom:24px;}
+.home-stat{flex:1;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;}
+.home-stat-num{font-size:22px;font-weight:500;color:var(--gold);}
+.home-stat-label{font-size:12px;color:var(--text2);margin-top:2px;}
+
+/* photo card */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.photo-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:var(--transition);}
+.photo-card:hover{border-color:var(--gold-border);transform:translateY(-2px);}
+.photo-thumb{height:180px;position:relative;overflow:hidden;}
+.photo-thumb-bg{width:100%;height:100%;background-size:cover;background-position:center;transition:transform 0.4s ease;}
+.photo-card:hover .photo-thumb-bg{transform:scale(1.04);}
+.bg-1{background:linear-gradient(160deg,#2A1A0E 0%,#5C3520 40%,#8B5230 70%,#3D1F10 100%);}
+.bg-2{background:linear-gradient(160deg,#0E1A2A 0%,#203550 40%,#305080 70%,#101F3D 100%);}
+.bg-3{background:linear-gradient(160deg,#1A2A0E 0%,#354520 40%,#507030 70%,#1F3D10 100%);}
+.bg-4{background:linear-gradient(160deg,#2A0E2A 0%,#502050 40%,#703080 70%,#3D103D 100%);}
+.bg-5{background:linear-gradient(160deg,#2A1A0E 0%,#604030 40%,#906050 70%,#3D2010 100%);}
+.bg-6{background:linear-gradient(160deg,#0E2020 0%,#204040 40%,#306060 70%,#103030 100%);}
+.photo-thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(247,244,239,0.7) 0%,transparent 50%);}
+.thumb-overlay{position:absolute;bottom:10px;right:12px;z-index:1;display:flex;gap:6px;align-items:center;}
+.thumb-badge{background:rgba(184,134,11,0.9);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.avail-indicator{position:absolute;top:12px;left:12px;z-index:1;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2px rgba(247,244,239,0.6);}
+.avail-yes{background:var(--green);}
+.avail-busy{background:var(--orange);}
+.avail-no{background:#B71C1C;}
+.photo-info{padding:14px 16px 16px;}
+.photo-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:5px;}
+.photo-meta-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.photo-city{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:4px;}
+.photo-rating{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gold);}
+.photo-rating span{color:var(--text2);font-size:11px;}
+.photo-price-row{display:flex;justify-content:space-between;align-items:center;}
+.photo-price{font-size:13px;color:var(--text2);}
+.photo-price strong{color:var(--text);font-size:15px;}
+.photo-specialties{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px;}
+.specialty-tag{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--dark3);border:0.5px solid var(--border);color:var(--text3);}
+
+/* =============================
+   PROFILE SCREEN
+   ============================= */
+#profile{padding-bottom:80px;}
+.prof-cover{height:220px;position:relative;overflow:hidden;}
+.prof-cover-bg{width:100%;height:100%;}
+.prof-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(247,244,239,0.95) 0%,transparent 60%);}
+.prof-back-btn{position:absolute;top:16px;right:16px;z-index:2;width:38px;height:38px;border-radius:var(--radius-sm);background:rgba(247,244,239,0.6);backdrop-filter:blur(8px);border:0.5px solid rgba(0,0,0,0.15);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:var(--transition);}
+.prof-back-btn:hover{color:var(--gold);border-color:var(--gold-border);}
+.prof-identity{position:absolute;bottom:16px;right:20px;z-index:2;display:flex;align-items:flex-end;gap:14px;}
+.prof-avatar{width:68px;height:68px;border-radius:50%;border:2px solid var(--gold);background:var(--dark3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:26px;flex-shrink:0;}
+.prof-name{font-size:20px;font-weight:500;color:var(--text);line-height:1.2;}
+.prof-sub{font-size:13px;color:var(--gold);margin-top:3px;}
+.prof-body{padding:20px 20px 0;}
+.prof-stats{display:flex;gap:10px;margin-bottom:24px;}
+.prof-stat{flex:1;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;}
+.prof-stat-num{font-size:20px;font-weight:500;color:var(--text);}
+.prof-stat-label{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* GALLERY - real photos */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:24px;border-radius:var(--radius);overflow:hidden;}
+.gallery-item{aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;display:block;}
+.gallery-item:hover img{transform:scale(1.08);}
+.gallery-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
+.gallery-item:hover::after{opacity:1;}
+.gallery-more{position:absolute;inset:0;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:#fff;}
+
+/* PACKAGES */
+.package-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.package-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:12px;position:relative;}
+.package-item.selected{border-color:var(--gold);background:var(--gold-dim);}
+.package-item:hover{border-color:var(--gold-border);}
+.pack-selected-badge{position:absolute;top:-8px;right:14px;background:var(--gold);color:#fff;font-size:11px;padding:2px 10px;border-radius:10px;display:none;}
+.package-item.selected .pack-selected-badge{display:block;}
+.pack-info{flex:1;}
+.pack-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:6px;}
+.pack-includes{display:flex;gap:6px;flex-wrap:wrap;}
+.pack-include-tag{font-size:12px;padding:3px 8px;border-radius:6px;background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);display:flex;align-items:center;gap:4px;}
+.pack-price-col{text-align:left;}
+.pack-price-main{font-size:20px;font-weight:500;color:var(--gold);}
+.pack-price-label{font-size:11px;color:var(--text2);}
+
+/* =============================
+   CHAT SCREEN
+   ============================= */
+#chat{padding-bottom:0;}
+.chat-topbar{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(247,244,239,0.97);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:100;}
+.chat-phot-info{flex:1;}
+.chat-phot-name{font-size:15px;font-weight:500;color:var(--text);}
+.chat-phot-status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.chat-phot-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
+.chat-accepted-banner{background:rgba(46,125,50,0.10);border:0.5px solid rgba(46,125,50,0.3);border-radius:var(--radius);padding:12px 16px;margin:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#1B5E20;}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:0;padding-bottom:80px;}
+.chat-bubble-wrap{display:flex;flex-direction:column;max-width:75%;}
+.chat-bubble-wrap.me{align-self:flex-end;align-items:flex-end;}
+.chat-bubble-wrap.them{align-self:flex-start;align-items:flex-start;}
+.chat-bubble{padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.5;word-break:break-word;}
+.chat-bubble-wrap.me .chat-bubble{background:var(--gold);color:#fff;border-bottom-right-radius:4px;}
+.chat-bubble-wrap.them .chat-bubble{background:var(--surface);border:0.5px solid var(--border);color:var(--text);border-bottom-left-radius:4px;}
+.chat-time{font-size:11px;color:var(--text3);margin-top:3px;padding:0 4px;}
+.chat-date-sep{text-align:center;font-size:12px;color:var(--text3);padding:8px 0;}
+.chat-input-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(247,244,239,0.97);backdrop-filter:blur(12px);border-top:0.5px solid var(--border);padding:10px 14px 20px;display:flex;align-items:center;gap:10px;z-index:100;}
+.chat-input{flex:1;background:var(--dark3);border:0.5px solid var(--border);border-radius:22px;padding:10px 16px;font-family:'Tajawal',sans-serif;font-size:14px;color:var(--text);outline:none;resize:none;max-height:100px;transition:var(--transition);}
+.chat-input:focus{border-color:var(--gold-border);}
+.chat-send-btn{width:42px;height:42px;border-radius:50%;background:var(--gold);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0;transition:var(--transition);}
+.chat-send-btn:hover{background:#9A6F00;}
+.chat-system-msg{text-align:center;font-size:12px;color:var(--text3);background:var(--dark3);border-radius:20px;padding:5px 14px;margin:4px auto;max-width:80%;}
+.chat-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);font-size:12px;font-weight:500;cursor:pointer;transition:var(--transition);flex-shrink:0;}
+.chat-btn:hover{background:var(--gold);color:#fff;}
+.phot-chat-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:var(--transition);}
+.phot-chat-row:hover{border-color:var(--gold-border);}
+.phot-chat-row.unread{border-right:3px solid var(--gold);}
+.phot-chat-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.phot-chat-info{flex:1;min-width:0;}
+.phot-chat-name{font-size:14px;font-weight:500;color:var(--text);}
+.phot-chat-preview{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.phot-chat-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.phot-chat-time{font-size:11px;color:var(--text3);}
+.phot-chat-unread{width:18px;height:18px;border-radius:50%;background:var(--gold);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.commission-detail-card{background:rgba(184,134,11,0.06);border:0.5px solid var(--gold-border);border-radius:var(--radius);padding:14px 16px;margin-top:12px;}
+.commission-detail-title{font-size:13px;font-weight:500;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.commission-detail-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px;}
+.commission-detail-row .val{font-weight:500;color:var(--text);}
+.commission-detail-row.net{color:var(--green);font-weight:600;}
+.commission-detail-row.net .val{color:var(--green);}
+
+/* REVIEWS */
+.reviews-list{display:flex;flex-direction:column;gap:14px;margin-bottom:24px;}
+.review-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;}
+.review-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.reviewer-info{display:flex;align-items:center;gap:10px;}
+.reviewer-avatar{width:36px;height:36px;border-radius:50%;background:var(--dark3);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;}
+.reviewer-name{font-size:14px;font-weight:500;color:var(--text);}
+.reviewer-date{font-size:12px;color:var(--text3);margin-top:2px;}
+.review-text{font-size:14px;color:var(--text2);line-height:1.6;}
+
+/* BOOK BAR */
+.book-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(247,244,239,0.97);backdrop-filter:blur(16px);border-top:0.5px solid var(--border);padding:12px 20px 20px;display:flex;align-items:center;gap:12px;z-index:150;}
+.book-bar-info{flex:1;}
+.book-bar-label{font-size:12px;color:var(--text2);}
+.book-bar-price{font-size:18px;font-weight:500;color:var(--text);}
+
+/* =============================
+   BOOKING SCREEN
+   ============================= */
+#booking{padding-bottom:80px;}
+.booking-phot-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:14px;}
+.booking-phot-avatar{width:48px;height:48px;border-radius:50%;border:1px solid var(--gold-border);background:var(--dark3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;}
+.booking-phot-name{font-size:15px;font-weight:500;color:var(--text);}
+.booking-phot-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.calendar-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;}
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.cal-month{font-size:15px;font-weight:500;color:var(--text);}
+.cal-nav{width:32px;height:32px;border-radius:var(--radius-sm);background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:var(--transition);}
+.cal-nav:hover{border-color:var(--gold-border);color:var(--gold);}
+.cal-day-names{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:8px;}
+.cal-day-name{text-align:center;font-size:11px;color:var(--text3);padding:4px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{text-align:center;padding:8px 4px;border-radius:var(--radius-sm);font-size:13px;color:var(--text2);cursor:pointer;transition:var(--transition);aspect-ratio:1;display:flex;align-items:center;justify-content:center;}
+.cal-cell:hover:not(.empty):not(.past):not(.unavail){background:var(--dark3);color:var(--text);}
+.cal-cell.today{color:var(--gold);font-weight:500;}
+.cal-cell.selected{background:var(--gold);color:#fff;font-weight:500;}
+.cal-cell.unavail{color:var(--dark4);cursor:not-allowed;text-decoration:line-through;}
+.cal-cell.past{color:var(--dark4);cursor:not-allowed;}
+.cal-cell.empty{cursor:default;}
+.payment-methods{display:flex;gap:10px;margin-bottom:20px;}
+.pay-method{flex:1;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;cursor:pointer;transition:var(--transition);}
+.pay-method i{font-size:22px;color:var(--text2);display:block;margin-bottom:5px;}
+.pay-method span{font-size:12px;color:var(--text2);}
+.pay-method:hover,.pay-method.active{border-color:var(--gold-border);background:var(--gold-dim);}
+.pay-method.active i,.pay-method.active span{color:var(--gold);}
+.booking-summary{background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--radius);padding:16px 18px;margin-bottom:20px;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px;}
+.summary-row .label{color:var(--text2);}
+.summary-row .value{color:var(--text);font-weight:500;}
+.summary-divider{border:none;border-top:0.5px solid var(--gold-border);margin:10px 0;}
+.summary-total{font-size:16px;}
+.summary-total .label{color:var(--text);font-weight:500;}
+.summary-total .value{color:var(--gold);font-size:18px;font-weight:500;}
+
+/* =============================
+   OFFERS SCREEN
+   ============================= */
+#offers{padding-bottom:80px;}
+.offer-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;transition:var(--transition);}
+
+/* ── CLIENT OFFER ROW CARDS ── */
+/* === SQUARE OFFER CARDS (CLIENT) === */
+.sq-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cof-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;align-items:stretch;transition:var(--transition);cursor:default;position:relative;}
+.cof-card.new-offer{border-top:3px solid var(--gold);}
+.cof-card.accepted{border-top:3px solid var(--green);}
+.cof-card.rejected{opacity:0.45;}
+.cof-thumb{position:relative;height:64px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;}
+.cof-thumb i{font-size:26px;color:var(--gold);opacity:0.6;}
+.cof-new-dot{position:absolute;top:6px;right:6px;background:var(--gold);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.cof-body{padding:10px 10px 8px;flex:1;display:flex;flex-direction:column;gap:3px;}
+.cof-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
+.cof-rating{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:3px;}
+.cof-rating i{font-size:10px;color:var(--gold);}
+.cof-price{font-size:15px;font-weight:700;color:var(--gold);}
+.cof-desc{font-size:10px;color:var(--text3);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.cof-expires{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:3px;margin-top:2px;}
+.cof-footer{display:flex;flex-direction:row;border-top:0.5px solid var(--border);}
+.cof-accept{flex:1;padding:9px 0;background:var(--gold);color:#fff;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:var(--transition);}
+.cof-accept:hover{background:#9A6F00;}
+.cof-reject{padding:9px 12px;background:var(--dark3);border:none;border-right:0.5px solid var(--border);color:var(--text3);font-family:'Tajawal',sans-serif;font-size:16px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;}
+.cof-reject:hover{color:#B71C1C;}
+.cof-chat-btn{flex:1;padding:9px 0;background:var(--gold-dim);color:var(--gold);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:var(--transition);}
+.cof-chat-btn:hover{background:var(--gold);color:#fff;}
+
+/* ── CLIENT BOOKING ROW CARDS ── */
+/* === SQUARE BOOKING CARDS (CLIENT) === */
+.cbk-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;align-items:stretch;transition:var(--transition);}
+.cbk-card.confirmed{border-top:3px solid var(--green);}
+.cbk-card.done{border-top:3px solid var(--text3);}
+.cbk-thumb{height:60px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;}
+.cbk-thumb i{font-size:24px;color:var(--gold);opacity:0.5;}
+.cbk-body{padding:10px 10px 8px;flex:1;display:flex;flex-direction:column;gap:3px;}
+.cbk-name{font-size:13px;font-weight:600;color:var(--text);}
+.cbk-meta{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cbk-footer{display:flex;border-top:0.5px solid var(--border);}
+.cbk-chat{flex:1;padding:9px 0;background:var(--gold-dim);color:var(--gold);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:var(--transition);}
+.cbk-chat:hover{background:var(--gold);color:#fff;}
+
+.client-empty{grid-column:1/-1;text-align:center;padding:40px 16px;color:var(--text3);}
+.client-empty i{font-size:40px;opacity:0.25;display:block;margin-bottom:10px;}
+.client-empty p{font-size:13px;line-height:1.6;}
+.offer-thumb{height:130px;position:relative;overflow:hidden;}
+.offer-thumb-bg{width:100%;height:100%;}
+.offer-thumb-bottom{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 100%);display:flex;justify-content:space-between;align-items:flex-end;}
+.offer-client-name{font-size:15px;font-weight:500;color:#fff;}
+.offer-body{padding:14px 16px 16px;}
+.offer-detail-row{display:flex;gap:16px;margin-bottom:10px;}
+.offer-detail-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);}
+.offer-detail-item i{color:var(--gold);font-size:14px;}
+.offer-message{background:var(--dark3);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;}
+.offer-message-label{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.offer-message{font-size:13px;color:var(--text2);}
+
+/* =============================
+   DASHBOARD SCREEN
+   ============================= */
+#dashboard{padding-bottom:80px;}
+.dash-header{background:var(--dark2);border-bottom:0.5px solid var(--border);padding:20px;display:flex;justify-content:space-between;align-items:flex-start;}
+.dash-greeting{font-size:13px;color:var(--text2);margin-bottom:2px;}
+.dash-name{font-size:21px;font-weight:500;color:var(--text);}
+.dash-avail-toggle{display:flex;align-items:center;gap:8px;background:var(--dark3);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 14px;cursor:pointer;font-size:13px;color:var(--text2);transition:var(--transition);}
+.dash-avail-toggle.available{border-color:rgba(46,125,50,0.3);color:#1B5E20;}
+.toggle-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);}
+.dash-avail-toggle.available .toggle-dot{background:var(--green);box-shadow:0 0 6px rgba(46,125,50,0.4);}
+.dash-content{padding:20px;}
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.dash-stat{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.dash-stat.wide{grid-column:span 2;}
+.dash-stat-label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.dash-stat-num{font-size:24px;font-weight:500;color:var(--text);}
+.dash-stat-trend{font-size:12px;color:var(--green);margin-top:4px;}
+.progress-bar{height:4px;background:var(--dark3);border-radius:2px;margin-top:10px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.8s ease;}
+.progress-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--text3);}
+.bookings-list{display:flex;flex-direction:column;gap:10px;}
+.booking-row{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;transition:var(--transition);cursor:pointer;}
+.booking-row:hover{border-color:var(--gold-border);}
+.booking-avatar{width:40px;height:40px;border-radius:50%;background:var(--dark3);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;flex-shrink:0;}
+.booking-info{flex:1;}
+.booking-client{font-size:14px;font-weight:500;color:var(--text);}
+.booking-meta{font-size:12px;color:var(--text2);margin-top:2px;display:flex;gap:10px;}
+.earnings-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin:12px 0 4px;}
+.earn-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.earn-bar-col{width:100%;border-radius:3px 3px 0 0;background:var(--dark3);border:0.5px solid var(--border);transition:height 0.6s ease;min-height:4px;}
+.earn-bar-col.current{background:var(--gold);border-color:var(--gold);}
+.earn-month-label{font-size:9px;color:var(--text3);}
+
+/* =============================
+   MODALS
+   ============================= */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,20,16,0.55);backdrop-filter:blur(4px);z-index:500;display:none;align-items:flex-end;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
+.modal{background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:28px 24px 32px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
+.modal-handle{width:36px;height:3px;border-radius:2px;background:var(--dark3);margin:0 auto 24px;}
+.modal-title{font-size:18px;font-weight:500;color:var(--text);margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+
+/* SUCCESS */
+.success-content{padding:40px 24px;text-align:center;}
+.success-icon{width:72px;height:72px;border-radius:50%;background:rgba(46,125,50,0.12);border:1px solid rgba(46,125,50,0.3);display:flex;align-items:center;justify-content:center;font-size:32px;color:#1B5E20;margin:0 auto 24px;}
+.success-title{font-size:22px;font-weight:500;color:var(--text);margin-bottom:10px;}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:320px;margin:0 auto;}
+
+/* =============================
+   ACCOUNT ROLE INDICATOR
+   ============================= */
+.role-indicator{display:flex;align-items:center;gap:6px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;}
+.role-client{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);}
+.role-photographer{background:rgba(74,20,140,0.08);color:#6A1B9A;border:1px solid rgba(74,20,140,0.2);}
+
+/* BOOKING METHOD CARDS */
+.booking-method-card{flex:1;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:var(--transition);text-align:center;}
+.booking-method-card.active-method{border-color:var(--gold);background:var(--gold-dim);}
+.booking-method-card:hover{border-color:var(--gold-border);}
+.bm-title{font-size:13px;font-weight:600;color:var(--text);margin-top:6px;margin-bottom:2px;}
+.bm-sub{font-size:11px;color:var(--text3);}
+.booking-method-card.active-method .bm-title{color:var(--gold);}
+
+/* QUOTE REQUEST PANEL */
+.quote-panel{background:var(--surface);border:1px solid var(--gold-border);border-radius:var(--radius);padding:16px 16px 18px;margin:14px 16px 0;display:none;}
+.quote-panel.visible{display:block;}
+.quote-panel-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.quote-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.quote-grid .form-group{margin-bottom:0;}
+.quote-grid-full{grid-column:1/-1;}
+
+/* PACKAGE GRID CARDS */
+.pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.pack-grid-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 12px;cursor:pointer;transition:var(--transition);display:flex;flex-direction:column;gap:6px;position:relative;}
+.pack-grid-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.pack-grid-card:hover{border-color:var(--gold-border);}
+.pack-grid-badge{position:absolute;top:-9px;right:10px;background:var(--gold);color:#fff;font-size:10px;padding:2px 9px;border-radius:10px;display:none;}
+.pack-grid-card.selected .pack-grid-badge{display:block;}
+.pack-grid-popular{position:absolute;top:-9px;left:10px;background:var(--gold);color:#fff;font-size:10px;padding:2px 9px;border-radius:10px;}
+.pack-grid-name{font-size:13px;font-weight:600;color:var(--text);}
+.pack-grid-price{font-size:20px;font-weight:700;color:var(--gold);line-height:1;}
+.pack-grid-price-label{font-size:10px;color:var(--text3);}
+.pack-grid-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;}
+.pack-grid-tag{font-size:10px;padding:2px 6px;border-radius:5px;background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);}
+.pack-grid-rows{margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+.pack-grid-row{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);}
+.pack-grid-row i{color:var(--gold);font-size:12px;flex-shrink:0;}
+
+/* REVIEW GRID CARDS */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.review-grid-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 12px;display:flex;flex-direction:column;gap:8px;}
+.review-grid-top{display:flex;align-items:center;gap:8px;}
+.review-grid-avatar{width:34px;height:34px;border-radius:50%;background:var(--dark3);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:14px;flex-shrink:0;}
+.review-grid-name{font-size:13px;font-weight:500;color:var(--text);}
+.review-grid-date{font-size:11px;color:var(--text3);margin-top:1px;}
+.review-grid-stars{color:var(--gold);font-size:12px;letter-spacing:1px;}
+.review-grid-text{font-size:12px;color:var(--text2);line-height:1.5;}
+
+/* === SQUARE OFFER CARDS (PHOTOGRAPHER) === */
+.offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.offer-grid-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:var(--transition);align-items:stretch;}
+.offer-grid-card.new{border-top:3px solid var(--gold);}
+.offer-grid-card.pending{border-top:3px solid var(--orange);}
+.offer-grid-head{background:var(--gold-dim);padding:10px 10px;position:relative;display:flex;flex-direction:column;justify-content:center;gap:2px;}
+.offer-grid-client{font-size:13px;font-weight:600;color:var(--text);}
+.offer-grid-venue{font-size:10px;color:var(--text3);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.offer-grid-new-dot{position:absolute;top:6px;left:6px;background:var(--gold);color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.offer-grid-body{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:3px;justify-content:center;}
+.offer-grid-row{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);}
+.offer-grid-row i{color:var(--gold);font-size:11px;}
+.offer-grid-budget{font-size:14px;font-weight:700;color:var(--gold);margin-top:2px;}
+.offer-grid-msg{font-size:10px;color:var(--text3);font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
+.offer-grid-foot{display:flex;flex-direction:row;border-top:0.5px solid var(--border);}
+.offer-actions{display:flex;flex-direction:row;width:100%;}
+.offer-grid-btn{flex:1;padding:9px 0;border:none;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:var(--transition);white-space:nowrap;}
+.offer-grid-btn.accept{background:var(--gold);color:#fff;}
+.offer-grid-btn.accept:hover{background:#9A6F00;}
+.offer-grid-btn.chat{background:var(--gold-dim);color:var(--gold);}
+.offer-grid-btn.chat:hover{background:var(--gold);color:#fff;}
+.offer-grid-btn.reject{background:var(--dark3);color:var(--text3);border-right:0.5px solid var(--border);flex:0 0 38px;padding:9px 0;}
+.offer-grid-btn.reject:hover{color:#B71C1C;}
+
+/* === SQUARE DASHBOARD BOOKING CARDS (PHOTOGRAPHER) === */
+.dash-bookings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.dash-bk-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 12px;display:flex;flex-direction:column;gap:8px;transition:var(--transition);}
+.dash-bk-card:hover{border-color:var(--gold-border);}
+.dash-bk-avatar{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px;flex-shrink:0;}
+.dash-bk-client{font-size:13px;font-weight:600;color:var(--text);}
+.dash-bk-meta{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;}
+.dash-bk-meta i{color:var(--gold);font-size:10px;}
+.dash-bk-pack{font-size:10px;color:var(--text2);}
+.dash-bk-foot{display:flex;justify-content:flex-start;}
+.chat-grid{display:flex;flex-direction:column;gap:8px;}
+.chat-grid-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;cursor:pointer;transition:var(--transition);display:flex;flex-direction:row;align-items:center;gap:12px;position:relative;}
+.chat-grid-card:hover{border-color:var(--gold-border);}
+.chat-grid-card.unread{border-right:3px solid var(--gold);}
+.chat-grid-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.chat-grid-name{font-size:14px;font-weight:500;color:var(--text);}
+.chat-grid-preview{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+.chat-grid-info{flex:1;min-width:0;}
+.chat-grid-foot{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.chat-grid-time{font-size:10px;color:var(--text3);}
+.chat-grid-unread{width:18px;height:18px;border-radius:50%;background:var(--gold);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* SQUARE CHAT CARDS GRID */
+.chat-sq-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 12px 12px;cursor:pointer;transition:var(--transition);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;position:relative;aspect-ratio:1;overflow:hidden;justify-content:center;}
+.chat-sq-card:hover{border-color:var(--gold-border);transform:translateY(-2px);box-shadow:0 4px 12px rgba(184,134,11,0.08);}
+.chat-sq-card.unread{border-top:3px solid var(--gold);}
+.chat-sq-avatar{width:44px;height:44px;border-radius:50%;background:var(--gold-dim);border:1.5px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.chat-sq-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chat-sq-preview{font-size:10px;color:var(--text3);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;width:100%;line-height:1.4;}
+.chat-sq-time{font-size:10px;color:var(--text3);}
+.chat-sq-unread{position:absolute;top:7px;left:7px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+
+/* PHOTOGRAPHER PORTFOLIO TAB */
+.prof-tabs{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:20px;}
+.prof-tab{flex:1;text-align:center;padding:12px;font-size:14px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition);}
+.prof-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* WEDDING PHOTO GALLERY */
+.wedding-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:24px;border-radius:var(--radius);overflow:hidden;}
+.wedding-item{aspect-ratio:1;overflow:hidden;cursor:pointer;position:relative;}
+.wedding-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;display:block;}
+.wedding-item:hover img{transform:scale(1.08);}
+.wedding-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.25) 0%,transparent 60%);opacity:0;transition:opacity 0.3s;}
+.wedding-item:hover::after{opacity:1;}
+.wedding-more{position:absolute;inset:0;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:#fff;}
+
+/* PACKAGE DETAILS */
+.pack-detail-list{margin-top:8px;display:flex;flex-direction:column;gap:4px;}
+.pack-detail-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.pack-detail-row i{color:var(--gold);font-size:13px;flex-shrink:0;}
+
+/* PAYMENT SHIELD NOTICE */
+.pay-shield-notice{background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.25);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:#1B5E20;margin-bottom:16px;}
+.pay-shield-notice i{font-size:18px;flex-shrink:0;}
+
+/* EDIT PROFILE */
+.edit-cover-wrap{position:relative;height:170px;border-radius:var(--radius);overflow:hidden;margin-bottom:50px;}
+.edit-cover-bg{width:100%;height:100%;position:relative;}
+.edit-cover-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;}
+.edit-upload-btn{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);font-family:'Tajawal',sans-serif;transition:var(--transition);}
+.edit-upload-btn:hover{background:rgba(255,255,255,0.28);}
+.edit-avatar-wrap{position:absolute;bottom:-36px;right:20px;display:flex;align-items:flex-end;gap:0;}
+.edit-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--surface);background:var(--dark3);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.edit-avatar img{width:100%;height:100%;object-fit:cover;}
+.edit-avatar-btn{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;position:absolute;bottom:0;right:50px;border:2px solid var(--surface);}
+.edit-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;}
+
+/* UPLOAD GRID */
+.upload-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.upload-thumb{aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;position:relative;cursor:pointer;}
+.upload-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.upload-thumb-del{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:rgba(183,28,28,0.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;opacity:0;transition:opacity 0.2s;}
+.upload-thumb:hover .upload-thumb-del{opacity:1;}
+.upload-add-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--dark3);border:1.5px dashed var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;color:var(--text3);font-size:13px;font-family:'Tajawal',sans-serif;width:100%;transition:var(--transition);}
+.upload-add-btn:hover{border-color:var(--gold-border);color:var(--gold);}
+
+/* PACKAGES EDITOR */
+.pack-edit-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;position:relative;}
+.pack-edit-card.highlight{border-color:var(--gold-border);}
+.pack-edit-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.pack-edit-label{font-size:14px;font-weight:600;color:var(--text);}
+.pack-edit-del{width:30px;height:30px;border-radius:var(--radius-sm);background:rgba(183,28,28,0.08);border:0.5px solid rgba(183,28,28,0.2);color:#B71C1C;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:var(--transition);}
+.pack-edit-del:hover{background:rgba(183,28,28,0.15);}
+.pack-includes-edit{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.pack-include-toggle{padding:6px 12px;border-radius:6px;background:var(--dark3);border:0.5px solid var(--border);color:var(--text2);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:var(--transition);font-family:'Tajawal',sans-serif;}
+.pack-include-toggle.on{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold);}
+.price-input-wrap{display:flex;align-items:center;gap:8px;margin-top:10px;}
+.price-input-wrap .form-input{font-size:18px;font-weight:500;text-align:center;}
+.price-input-wrap span{font-size:14px;color:var(--text2);white-space:nowrap;}
+/* COMMISSION NOTE */
+.commission-note{font-size:11px;color:var(--text3);margin-top:6px;text-align:center;}
+
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:1fr;}
+  .dash-stats{grid-template-columns:1fr;}
+  .dash-stat.wide{grid-column:1;}
+}
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--gold);border-bottom:0.5px solid rgba(255,255,255,0.15);position:sticky;top:0;z-index:100;}
+.admin-topbar-logo{font-size:18px;color:#fff;font-weight:500;letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+.admin-topbar-logo i{font-size:20px;}
+.admin-logout-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.15);border:0.5px solid rgba(255,255,255,0.25);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.admin-layout{display:flex;align-items:flex-start;}
+.admin-sidebar{flex-shrink:0;width:220px;display:flex;flex-direction:column;gap:8px;padding:18px 12px;background:var(--surface);border-left:0.5px solid var(--border);position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;}
+.admin-tab{width:100%;padding:12px 14px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:500;color:var(--text2);background:transparent;border:none;cursor:pointer;white-space:nowrap;transition:var(--transition);display:flex;align-items:center;gap:10px;text-align:right;}
+.admin-tab i{font-size:16px;color:var(--text3);transition:var(--transition);}
+.admin-tab.active{background:var(--gold);color:#fff;}
+.admin-tab.active i{color:#fff;}
+.admin-tab:hover:not(.active){background:var(--gold-dim);color:var(--gold);}
+.admin-tab:hover:not(.active) i{color:var(--gold);}
+.admin-body{flex:1;min-width:0;padding:18px 16px 100px;}
+@media (max-width:680px){
+  .admin-layout{flex-direction:column;}
+  .admin-sidebar{width:100%;flex-direction:row;overflow-x:auto;position:sticky;top:64px;height:auto;border-left:none;border-bottom:0.5px solid var(--border);padding:8px 10px;}
+  .admin-tab{width:auto;flex-shrink:0;}
+}
+.admin-section{display:none;}
+.admin-section.active{display:block;animation:fadeIn 0.2s ease;}
+.admin-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.admin-stat{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.admin-stat-icon{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--gold-dim);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;}
+.admin-stat-label{font-size:11.5px;color:var(--text2);margin-bottom:4px;}
+.admin-stat-num{font-size:21px;font-weight:600;color:var(--text);}
+.admin-section-title{font-size:15px;font-weight:600;color:var(--text);margin:18px 0 10px;display:flex;align-items:center;gap:6px;}
+.admin-row{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.admin-row-avatar{width:40px;height:40px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.admin-row-body{flex:1;min-width:0;}
+.admin-row-name{font-size:13.5px;font-weight:500;color:var(--text);}
+.admin-row-sub{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.admin-row-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.admin-mini-btn{padding:6px 10px;border-radius:var(--radius-sm);font-size:11px;font-weight:500;cursor:pointer;border:none;transition:var(--transition);white-space:nowrap;}
+.admin-mini-btn.approve{background:var(--gold);color:#fff;}
+.admin-mini-btn.approve:hover{background:#9A6F00;}
+.admin-mini-btn.reject{background:rgba(183,28,28,0.08);color:#B71C1C;border:0.5px solid rgba(183,28,28,0.2);}
+.admin-mini-btn.block{background:var(--dark3);color:var(--text2);border:0.5px solid var(--border);}
+.admin-mini-btn.view{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border);}
+.admin-search{width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);margin-bottom:14px;outline:none;}
+.admin-search:focus{border-color:var(--gold-border);}
+.admin-empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.switch-toggle{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;}
+.switch-toggle input{opacity:0;width:0;height:0;}
+.switch-slider{position:absolute;cursor:pointer;inset:0;background:var(--dark4);border-radius:24px;transition:var(--transition);}
+.switch-slider::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.switch-toggle input:checked + .switch-slider{background:var(--gold);}
+.switch-toggle input:checked + .switch-slider::before{transform:translateX(18px);}
+.admin-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:center;justify-content:center;padding:14px;}
+.admin-modal-overlay[style*="flex"]{display:flex;}
+.admin-modal-sheet{background:var(--dark);border-radius:var(--radius-lg);width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;}
+.admin-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px;background:var(--surface);border-bottom:0.5px solid var(--border);}
+.admin-modal-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;}
+
+/* INVOICE */
+.invoice-doc{background:var(--surface);padding:22px 20px;}
+.invoice-head{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.invoice-brand{font-size:20px;color:var(--gold);font-weight:500;letter-spacing:2px;}
+.invoice-brand-sub{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:1px;}
+.invoice-meta{text-align:left;}
+.invoice-meta-num{font-size:13px;font-weight:600;color:var(--text);}
+.invoice-meta-date{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.invoice-status{display:inline-flex;margin-top:6px;font-size:10.5px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.invoice-parties{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.invoice-party-label{font-size:10.5px;color:var(--text3);margin-bottom:3px;}
+.invoice-party-name{font-size:13.5px;font-weight:600;color:var(--text);}
+.invoice-party-role{font-size:11px;color:var(--text2);margin-top:1px;}
+.invoice-table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.invoice-table th{font-size:11px;color:var(--text3);text-align:right;padding:8px 4px;border-bottom:1px solid var(--border);font-weight:500;}
+.invoice-table td{font-size:13px;color:var(--text);padding:10px 4px;border-bottom:0.5px solid var(--border);}
+.invoice-totals{margin-right:auto;width:100%;max-width:220px;margin-top:8px;display:flex;flex-direction:column;gap:7px;}
+.invoice-totals-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text2);}
+.invoice-totals-row.grand{font-size:15px;font-weight:700;color:var(--text);border-top:1px solid var(--border);padding-top:8px;margin-top:2px;}
+.invoice-totals-row.grand span:last-child{color:var(--gold);}
+.invoice-foot{margin-top:20px;padding-top:14px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);text-align:center;line-height:1.7;}
+.invoice-actions{display:flex;gap:10px;padding:14px 16px;background:var(--dark2);border-top:0.5px solid var(--border);}
+.invoice-actions .btn{flex:1;justify-content:center;}
+@media print{
+  body *{visibility:hidden;}
+  .invoice-doc,.invoice-doc *{visibility:visible;}
+  .invoice-doc{position:fixed;inset:0;padding:30px;}
+  .invoice-actions{display:none;}
+}
+</style>
+<style>
+/* ============ ADMIN LOGIN ============ */
+.admin-login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.admin-login-card{width:100%;max-width:380px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:36px 28px;text-align:center;}
+.admin-login-icon{width:56px;height:56px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 18px;}
+.admin-login-title{font-size:19px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.admin-login-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.admin-login-err{display:none;background:rgba(183,28,28,0.08);border:0.5px solid rgba(183,28,28,0.2);color:#B71C1C;font-size:12.5px;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:14px;text-align:right;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/atheer-supabase-client.js"></script>
+</head>
+<body>
+<div id="app">
+
+<!-- ============================================================
+     ADMIN LOGIN
+     ============================================================ -->
+<section id="adminLoginScreen" class="screen active">
+  <div class="admin-login-wrap">
+    <div class="admin-login-card">
+      <div class="admin-login-icon"><i class="ti ti-shield-lock"></i></div>
+      <div class="admin-login-title">لوحة إدارة أثير</div>
+      <div class="admin-login-sub">هذه اللوحة مستقلة عن الموقع الرسمي، خاصة بفريق أثير فقط</div>
+      <div class="admin-login-err" id="adminLoginErr">البريد أو كلمة المرور غير صحيحة</div>
+      <div class="form-group" style="text-align:right;">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input type="email" class="form-input" id="adminLoginEmail" placeholder="admin@atheer.sa">
+      </div>
+      <div class="form-group" style="text-align:right;">
+        <label class="form-label">كلمة المرور</label>
+        <input type="password" class="form-input" id="adminLoginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') attemptAdminLogin()">
+      </div>
+      <button class="btn btn-gold btn-full" style="margin-top:8px;" onclick="attemptAdminLogin()"><i class="ti ti-login"></i> دخول</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     ADMIN PANEL
+     ============================================================ -->
+<section id="adminPanel" class="screen">
+  <div class="admin-topbar">
+    <div class="admin-topbar-logo"><i class="ti ti-shield-lock"></i> أثير — لوحة الإدارة</div>
+    <div class="admin-logout-btn" onclick="adminLogout()"><i class="ti ti-logout"></i></div>
+  </div>
+
+  <div class="admin-layout">
+  <div class="admin-sidebar">
+    <button class="admin-tab active" id="adminTab-overview" onclick="adminGoTab('overview')"><i class="ti ti-layout-dashboard"></i> نظرة عامة</button>
+    <button class="admin-tab" id="adminTab-users" onclick="adminGoTab('users')"><i class="ti ti-users"></i> العملاء</button>
+    <button class="admin-tab" id="adminTab-photographers" onclick="adminGoTab('photographers')"><i class="ti ti-camera"></i> المصورين</button>
+    <button class="admin-tab" id="adminTab-bookings" onclick="adminGoTab('bookings')"><i class="ti ti-calendar-event"></i> الحجوزات</button>
+    <button class="admin-tab" id="adminTab-payments" onclick="adminGoTab('payments')"><i class="ti ti-credit-card"></i> المدفوعات</button>
+    <button class="admin-tab" id="adminTab-support" onclick="adminGoTab('support')"><i class="ti ti-headset"></i> الدعم والشكاوى</button>
+    <button class="admin-tab" id="adminTab-settings" onclick="adminGoTab('settings')"><i class="ti ti-settings"></i> العمولة والسياسة</button>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- OVERVIEW -->
+    <div class="admin-section active" id="adminSection-overview">
+      <div class="admin-stats-grid">
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-users"></i></div><div class="admin-stat-label">إجمالي العملاء</div><div class="admin-stat-num" id="adminStatUsers">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-camera"></i></div><div class="admin-stat-label">إجمالي المصورين</div><div class="admin-stat-num" id="adminStatPhotographers">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-calendar-check"></i></div><div class="admin-stat-label">الحجوزات المؤكدة</div><div class="admin-stat-num" id="adminStatBookings">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-coin"></i></div><div class="admin-stat-label">إجمالي الإيرادات</div><div class="admin-stat-num" id="adminStatRevenue">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-user-check"></i></div><div class="admin-stat-label">بانتظار التوثيق</div><div class="admin-stat-num" id="adminStatPending">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-icon"><i class="ti ti-message-report"></i></div><div class="admin-stat-label">شكاوى مفتوحة</div><div class="admin-stat-num" id="adminStatComplaints">—</div></div>
+      </div>
+
+      <div class="admin-section-title"><i class="ti ti-clock" style="font-size:14px;color:var(--gold);"></i> آخر النشاطات</div>
+      <div id="adminRecentActivity"></div>
+    </div>
+
+    <!-- USERS (CLIENTS) -->
+    <div class="admin-section" id="adminSection-users">
+      <input class="admin-search" id="adminUsersSearch" placeholder="ابحث باسم العميل أو البريد..." oninput="renderAdminUsers()">
+      <div id="adminUsersList"></div>
+    </div>
+
+    <!-- PHOTOGRAPHERS -->
+    <div class="admin-section" id="adminSection-photographers">
+      <input class="admin-search" id="adminPhotSearch" placeholder="ابحث باسم المصور أو المدينة..." oninput="renderAdminPhotographers()">
+      <div class="admin-section-title" style="margin-top:0;"><i class="ti ti-clock-exclamation" style="font-size:14px;color:var(--orange);"></i> بانتظار التوثيق</div>
+      <div id="adminPhotPendingList"></div>
+      <div class="admin-section-title"><i class="ti ti-list" style="font-size:14px;color:var(--gold);"></i> جميع المصورين</div>
+      <div id="adminPhotAllList"></div>
+    </div>
+
+    <!-- BOOKINGS / OFFERS -->
+    <div class="admin-section" id="adminSection-bookings">
+      <input class="admin-search" id="adminBookSearch" placeholder="ابحث باسم العميل أو المصور..." oninput="renderAdminBookings()">
+      <div id="adminBookingsList"></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="admin-section" id="adminSection-payments">
+      <div class="admin-stats-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="admin-stat"><div class="admin-stat-label">مدفوعات ناجحة</div><div class="admin-stat-num" id="adminPaidTotal">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">محجوز في المحافظ</div><div class="admin-stat-num" id="adminHeldTotal">—</div></div>
+        <div class="admin-stat"><div class="admin-stat-label">مستردة</div><div class="admin-stat-num" id="adminRefundedTotal">—</div></div>
+      </div>
+      <div id="adminPaymentsList"></div>
+    </div>
+
+    <!-- SUPPORT / COMPLAINTS -->
+    <div class="admin-section" id="adminSection-support">
+      <div id="adminSupportList"></div>
+    </div>
+
+    <!-- SETTINGS: COMMISSION & POLICY -->
+    <div class="admin-section" id="adminSection-settings">
+      <div class="admin-section-title" style="margin-top:0;"><i class="ti ti-percentage" style="font-size:14px;color:var(--gold);"></i> عمولة التطبيق</div>
+      <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:14px;padding:18px 16px;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:18px;">
+          <button class="admin-mini-btn block" style="width:42px;height:42px;font-size:18px;padding:0;" onclick="adminChangeCommission(-1)"><i class="ti ti-minus"></i></button>
+          <div style="text-align:center;">
+            <div style="font-size:34px;font-weight:600;color:var(--gold);" id="adminCommissionValue">10%</div>
+            <div style="font-size:11.5px;color:var(--text3);margin-top:2px;">من قيمة كل حجز</div>
+          </div>
+          <button class="admin-mini-btn approve" style="width:42px;height:42px;font-size:18px;padding:0;" onclick="adminChangeCommission(1)"><i class="ti ti-plus"></i></button>
+        </div>
+        <input type="range" id="adminCommissionSlider" min="0" max="30" value="10" step="0.5" style="width:100%;accent-color:var(--gold);" oninput="adminSetCommission(this.value)">
+        <div style="font-size:11.5px;color:var(--text3);text-align:center;">مثال: على حجز بقيمة 2,500 ريال، عمولة التطبيق = <span id="adminCommissionExample">250 ريال</span></div>
+      </div>
+
+      <div class="admin-section-title"><i class="ti ti-file-text" style="font-size:14px;color:var(--gold);"></i> سياسة الإلغاء والاسترداد</div>
+      <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:10px;padding:16px;">
+        <textarea id="adminCancelPolicyText" rows="4" style="width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <div class="admin-section-title">الشروط والأحكام</div>
+      <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:10px;padding:16px;">
+        <textarea id="adminTermsText" rows="6" style="width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <div class="admin-section-title">سياسة الخصوصية</div>
+      <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:10px;padding:16px;">
+        <textarea id="adminPrivacyText" rows="6" style="width:100%;padding:11px 14px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <button class="btn btn-gold btn-full" style="margin-top:6px;" onclick="adminSaveSettings()"><i class="ti ti-device-floppy"></i> حفظ كل التغييرات</button>
+      <div id="adminSettingsSavedMsg" style="display:none;text-align:center;font-size:12.5px;color:var(--green);margin-top:10px;"><i class="ti ti-check"></i> تم حفظ التغييرات بنجاح</div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- BOOKING DETAILS + CHAT VIEWER MODAL -->
+  <div class="admin-modal-overlay" id="adminBookingDetailsOverlay" onclick="if(event.target===this) closeAdminBookingDetails()">
+    <div class="admin-modal-sheet">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title"><i class="ti ti-calendar-event"></i> تفاصيل الحجز</div>
+        <div class="admin-logout-btn" onclick="closeAdminBookingDetails()" style="color:var(--text2);background:var(--dark3);border-color:var(--border);"><i class="ti ti-x"></i></div>
+      </div>
+      <div id="adminBookingDetailsBody" style="padding:16px;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- INVOICE MODAL -->
+  <div class="admin-modal-overlay" id="adminInvoiceOverlay" onclick="if(event.target===this) closeAdminInvoice()">
+    <div class="admin-modal-sheet" style="max-width:440px;">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title"><i class="ti ti-receipt"></i> الفاتورة</div>
+        <div class="admin-logout-btn" onclick="closeAdminInvoice()" style="color:var(--text2);background:var(--dark3);border-color:var(--border);"><i class="ti ti-x"></i></div>
+      </div>
+      <div style="overflow-y:auto;">
+        <div class="invoice-doc" id="adminInvoiceBody"></div>
+      </div>
+      <div class="invoice-actions">
+        <button class="btn btn-dark" onclick="closeAdminInvoice()">إغلاق</button>
+        <button class="btn btn-gold" onclick="window.print()"><i class="ti ti-printer"></i> طباعة / حفظ PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ============================================================
+   ATHEER SHARED DB — يربط بيانات الموقع الرسمي بلوحة الإدارة
+   يخزّن البيانات في localStorage على نفس الدومين، بحيث أي حجز
+   أو دفعة أو شكوى تصير في الموقع الرسمي تنعكس فوراً في لوحة
+   الإدارة (وأي إجراء إداري — توثيق مصور، حظر، تغيير العمولة —
+   ينعكس على الموقع الرسمي). لازم الملفين يكونوا مستضافين على
+   نفس الدومين حتى تشتغل المزامنة.
+   ============================================================ */
+const ATHEER_DB_KEY = 'atheer_db_v2';
+
+function atheerDefaultDB(){
+  return {
+    users: [],
+    photographers: [],
+    bookings: [],
+    chats: {},
+    payments: [],
+    complaints: [],
+    settings: {
+      commissionRate: 10,
+      cancelPolicy: 'يمكن الإلغاء المجاني قبل 7 أيام من الموعد. من 3 إلى 7 أيام يُخصم 25% من العربون. في أقل من 3 أيام لا يُرد العربون. تواصل معنا لأي ظروف استثنائية.',
+      terms: 'باستخدامك تطبيق أثير فإنك توافق على شروط الاستخدام الخاصة بنا، وتلتزم بالدفع داخل التطبيق فقط لحمايتك وحماية المصور. يحتفظ أثير بحقه في إيقاف أي حساب يخالف الشروط أو يحاول التعامل خارج المنصة.',
+      privacy: 'نحرص في أثير على خصوصية بياناتك ولا نشاركها مع أي طرف ثالث إلا بموافقتك أو بما يقتضيه القانون. تُستخدم بياناتك فقط لتسهيل عملية الحجز والتواصل بين العميل والمصور.',
+    },
+    activity: [],
+  };
+}
+
+const AtheerDB = {
+  _data: null,
+  load(){
+    try{
+      const raw = localStorage.getItem(ATHEER_DB_KEY);
+      if(raw){ this._data = JSON.parse(raw); return this._data; }
+    }catch(e){}
+    this._data = atheerDefaultDB();
+    this.save(this._data);
+    return this._data;
+  },
+  get(){ return this._data || this.load(); },
+  save(data){
+    this._data = data;
+    try{ localStorage.setItem(ATHEER_DB_KEY, JSON.stringify(data)); }catch(e){}
+  },
+  update(fn){
+    const d = this.get();
+    fn(d);
+    this.save(d);
+    return d;
+  },
+  logActivity(icon, text){
+    this.update(d=>{
+      d.activity.unshift({icon, text, time:'الآن'});
+      if(d.activity.length>30) d.activity.length = 30;
+    });
+  }
+};
+AtheerDB.load();
+// مزامنة حيّة بين التبويبات/الملفات المفتوحة على نفس الدومين
+window.addEventListener('storage', function(e){
+  if(e.key === ATHEER_DB_KEY){
+    AtheerDB.load();
+    if(typeof onAtheerDBChanged === 'function') onAtheerDBChanged();
+  }
+});
+
+/* ============================================================
+   ADMIN PANEL — DATA (تُقرأ وتُكتب من/إلى قاعدة البيانات المشتركة AtheerDB)
+   ============================================================ */
+let adminUsersData, adminPhotographersData, adminBookingsData, adminPaymentsData, adminComplaintsData, adminChatMessages, adminSettings, adminRecentActivity;
+
+function loadFromDB(){
+  const d = AtheerDB.get();
+  adminUsersData = d.users;
+  adminPhotographersData = d.photographers;
+  adminBookingsData = d.bookings;
+  adminPaymentsData = d.payments;
+  adminComplaintsData = d.complaints;
+  adminChatMessages = d.chats;
+  adminSettings = d.settings;
+  adminRecentActivity = d.activity;
+}
+function persistToDB(){
+  AtheerDB.save(AtheerDB.get());
+}
+loadFromDB();
+
+
+/* ============================================================
+   ADMIN PANEL — TAB SWITCHING
+   ============================================================ */
+function adminGoTab(tab){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('adminTab-'+tab)?.classList.add('active');
+  document.getElementById('adminSection-'+tab)?.classList.add('active');
+}
+
+function renderAdminAll(){
+  loadFromDB();
+  renderAdminOverview();
+  renderAdminUsers();
+  renderAdminPhotographers();
+  renderAdminBookings();
+  renderAdminPayments();
+  renderAdminSupport();
+  renderAdminSettings();
+}
+
+/* ---------- OVERVIEW ---------- */
+function renderAdminOverview(){
+  document.getElementById('adminStatUsers').textContent = adminUsersData.length;
+  document.getElementById('adminStatPhotographers').textContent = adminPhotographersData.filter(p=>p.status==='verified').length;
+  document.getElementById('adminStatBookings').textContent = adminBookingsData.filter(b=>b.status==='confirmed').length;
+  const revenue = adminPaymentsData.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
+  document.getElementById('adminStatRevenue').textContent = revenue.toLocaleString()+' ر';
+  document.getElementById('adminStatPending').textContent = adminPhotographersData.filter(p=>p.status==='pending').length;
+  document.getElementById('adminStatComplaints').textContent = adminComplaintsData.filter(c=>c.status!=='resolved').length;
+
+  const list = document.getElementById('adminRecentActivity');
+  list.innerHTML = adminRecentActivity.map(a=>`
+    <div class="admin-row">
+      <div class="admin-row-avatar"><i class="ti ${a.icon}"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name" style="font-weight:400;">${a.text}</div>
+        <div class="admin-row-sub">${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- USERS (CLIENTS) ---------- */
+function renderAdminUsers(){
+  const q = (document.getElementById('adminUsersSearch')?.value||'').trim();
+  const list = adminUsersData.filter(u=>!q || u.name.includes(q) || u.email.includes(q));
+  const container = document.getElementById('adminUsersList');
+  if(!list.length){ container.innerHTML = `<div class="admin-empty"><i class="ti ti-search-off" style="font-size:28px;display:block;margin-bottom:8px;"></i>لا توجد نتائج</div>`; return; }
+  container.innerHTML = list.map(u=>`
+    <div class="admin-row">
+      <div class="admin-row-avatar"><i class="ti ti-user"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name">${u.name} ${u.status==='blocked'?'<span class="badge badge-red" style="font-size:10px;padding:2px 7px;margin-right:4px;">محظور</span>':''}</div>
+        <div class="admin-row-sub">${u.email} · ${u.city} · ${u.bookingsCount} حجز · انضم ${u.joinDate}</div>
+      </div>
+      <div class="admin-row-actions">
+        ${u.status==='active'
+          ? `<button class="admin-mini-btn block" onclick="adminToggleUserBlock(${u.id})"><i class="ti ti-ban"></i> حظر</button>`
+          : `<button class="admin-mini-btn approve" onclick="adminToggleUserBlock(${u.id})"><i class="ti ti-check"></i> إلغاء الحظر</button>`}
+      </div>
+    </div>`).join('');
+}
+
+function adminToggleUserBlock(id){
+  const u = adminUsersData.find(x=>x.id===id);
+  if(!u) return;
+  u.status = u.status==='active' ? 'blocked' : 'active';
+  persistToDB();
+  renderAdminUsers();
+}
+
+/* ---------- PHOTOGRAPHERS ---------- */
+function renderAdminPhotographers(){
+  const q = (document.getElementById('adminPhotSearch')?.value||'').trim();
+  const all = adminPhotographersData.filter(p=>!q || p.name.includes(q) || p.city.includes(q));
+  const pending = all.filter(p=>p.status==='pending');
+  const others = all.filter(p=>p.status!=='pending');
+
+  const pendingEl = document.getElementById('adminPhotPendingList');
+  pendingEl.innerHTML = pending.length ? pending.map(p=>`
+    <div class="admin-row">
+      <div class="admin-row-avatar"><i class="ti ti-camera"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name">${p.name}</div>
+        <div class="admin-row-sub">${p.city} · قدّم الطلب ${p.joinDate}</div>
+      </div>
+      <div class="admin-row-actions">
+        <button class="admin-mini-btn approve" onclick="adminApprovePhotographer(${p.id})"><i class="ti ti-check"></i> توثيق</button>
+        <button class="admin-mini-btn reject" onclick="adminRejectPhotographer(${p.id})"><i class="ti ti-x"></i> رفض</button>
+      </div>
+    </div>`).join('') : `<div class="admin-empty" style="padding:20px;">لا يوجد طلبات توثيق حالياً</div>`;
+
+  const allEl = document.getElementById('adminPhotAllList');
+  const statusBadge = {verified:'<span class="badge badge-green" style="font-size:10px;padding:2px 7px;">موثّق</span>',rejected:'<span class="badge badge-red" style="font-size:10px;padding:2px 7px;">مرفوض</span>',pending:'<span class="badge badge-orange" style="font-size:10px;padding:2px 7px;">بانتظار</span>'};
+  allEl.innerHTML = others.length ? others.map(p=>{
+    const photBookings = adminBookingsData.filter(b=>b.photographer===p.name && b.depositPaid);
+    const netEarnings = photBookings.reduce((s,b)=>s + (b.deposit - Math.round(b.deposit*b.commissionRate/100)), 0);
+    return `
+    <div class="admin-row">
+      <div class="admin-row-avatar"><i class="ti ti-camera"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name">${p.name} ${statusBadge[p.status]||''}</div>
+        <div class="admin-row-sub">${p.city} · ★ ${p.rating||'—'} (${p.reviews}) · ${p.bookingsCount} حجز · انضم ${p.joinDate}</div>
+        <div class="admin-row-sub" style="color:var(--green);">صافي أرباحه بعد العمولة: ${netEarnings.toLocaleString()} ريال <span style="color:var(--text3);">(عمولة التطبيق الحالية: ${adminSettings.commissionRate}%)</span></div>
+      </div>
+      <div class="admin-row-actions">
+        ${p.status==='verified'
+          ? `<button class="admin-mini-btn block" onclick="adminSuspendPhotographer(${p.id})"><i class="ti ti-ban"></i> إيقاف</button>`
+          : `<button class="admin-mini-btn approve" onclick="adminApprovePhotographer(${p.id})"><i class="ti ti-check"></i> توثيق</button>`}
+      </div>
+    </div>`;
+  }).join('') : `<div class="admin-empty" style="padding:20px;">لا يوجد مصورين</div>`;
+}
+
+function adminApprovePhotographer(id){
+  const p = adminPhotographersData.find(x=>x.id===id);
+  if(!p) return;
+  p.status = 'verified';
+  if(!p.rating) p.rating = 5.0;
+  persistToDB();
+  renderAdminPhotographers();
+  renderAdminOverview();
+}
+
+function adminRejectPhotographer(id){
+  const p = adminPhotographersData.find(x=>x.id===id);
+  if(!p) return;
+  p.status = 'rejected';
+  persistToDB();
+  renderAdminPhotographers();
+  renderAdminOverview();
+}
+
+function adminSuspendPhotographer(id){
+  const p = adminPhotographersData.find(x=>x.id===id);
+  if(!p) return;
+  p.status = 'rejected';
+  persistToDB();
+  renderAdminPhotographers();
+  renderAdminOverview();
+}
+
+/* ---------- BOOKINGS ---------- */
+function renderAdminBookings(){
+  const q = (document.getElementById('adminBookSearch')?.value||'').trim();
+  const list = adminBookingsData.filter(b=>!q || b.client.includes(q) || b.photographer.includes(q));
+  const container = document.getElementById('adminBookingsList');
+  const statusBadge = {confirmed:'<span class="badge badge-green" style="font-size:10px;padding:2px 7px;">مؤكد</span>',completed:'<span class="badge badge-purple" style="font-size:10px;padding:2px 7px;">منتهي</span>',cancelled:'<span class="badge badge-red" style="font-size:10px;padding:2px 7px;">ملغي</span>'};
+  if(!list.length){ container.innerHTML = `<div class="admin-empty">لا توجد نتائج</div>`; return; }
+  const payoutBadge = {
+    pending_final: '<span class="badge badge-orange" style="font-size:10px;padding:2px 7px;"><i class="ti ti-hourglass"></i> بانتظار الدفعة النهائية</span>',
+    held: '<span class="badge badge-purple" style="font-size:10px;padding:2px 7px;"><i class="ti ti-wallet"></i> محجوز في المحفظة</span>',
+    released: '<span class="badge badge-green" style="font-size:10px;padding:2px 7px;"><i class="ti ti-check"></i> تم التحويل للمصور</span>',
+  };
+  container.innerHTML = list.map(b=>`
+    <div class="admin-row" style="align-items:flex-start;cursor:pointer;" onclick="openAdminBookingDetails(${b.id})">
+      <div class="admin-row-avatar"><i class="ti ti-calendar-event"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name">${b.client} ← ${b.photographer} ${statusBadge[b.status]||''} ${b.status!=='cancelled'?(payoutBadge[b.payoutStatus]||''):''}</div>
+        <div class="admin-row-sub"><i class="ti ti-calendar" style="font-size:11px;"></i> ${b.date} · <i class="ti ti-clock" style="font-size:11px;"></i> ${b.time}</div>
+        <div class="admin-row-sub">الإجمالي ${b.price.toLocaleString()} ر · العربون ${b.deposit.toLocaleString()} ر ${b.depositPaid?'<span style="color:var(--green);">(مدفوع)</span>':'<span style="color:#B71C1C;">(غير مدفوع)</span>'} · صافي للمصور ${(b.deposit - Math.round(b.deposit*b.commissionRate/100)).toLocaleString()} ر (عمولة ${b.commissionRate}%) · المتبقي ${b.remaining.toLocaleString()} ر ${b.remainingPaid?'<span style="color:var(--green);">(مدفوع)</span>':'<span style="color:var(--text3);">(لم يُدفع بعد)</span>'}</div>
+      </div>
+      <div class="admin-row-actions">
+        <button class="admin-mini-btn view" onclick="event.stopPropagation();openAdminBookingDetails(${b.id})"><i class="ti ti-message-circle"></i> التفاصيل والشات</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- BOOKING DETAILS + CHAT VIEWER (read-only) ---------- */
+function openAdminBookingDetails(bookingId){
+  const b = adminBookingsData.find(x=>x.id===bookingId);
+  if(!b) return;
+  const statusMap = {confirmed:'مؤكد',completed:'منتهي',cancelled:'ملغي'};
+  const commissionRate = b.commissionRate;
+  const commissionAmount = Math.round(b.deposit * commissionRate / 100);
+  const netDeposit = b.deposit - commissionAmount;
+  document.getElementById('adminBookingDetailsBody').innerHTML = `
+    <div class="admin-stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px;">
+      <div class="admin-stat"><div class="admin-stat-label">العميل</div><div class="admin-stat-num" style="font-size:14px;">${b.client}</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">المصور</div><div class="admin-stat-num" style="font-size:14px;">${b.photographer}</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">التاريخ</div><div class="admin-stat-num" style="font-size:14px;"><i class="ti ti-calendar" style="font-size:13px;color:var(--gold);"></i> ${b.date}</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">الوقت</div><div class="admin-stat-num" style="font-size:14px;"><i class="ti ti-clock" style="font-size:13px;color:var(--gold);"></i> ${b.time}</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">الإجمالي</div><div class="admin-stat-num" style="font-size:14px;">${b.price.toLocaleString()} ريال</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">الحالة</div><div class="admin-stat-num" style="font-size:14px;">${statusMap[b.status]}</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">المبلغ المتبقي</div><div class="admin-stat-num" style="font-size:14px;">${b.remaining.toLocaleString()} ر ${b.remainingPaid?'<span class="badge badge-green" style="font-size:9px;padding:1px 6px;">مدفوع</span>':'<span class="badge badge-orange" style="font-size:9px;padding:1px 6px;">لم يُدفع</span>'}</div></div>
+    </div>
+
+    <div class="admin-section-title" style="margin-top:0;"><i class="ti ti-coin" style="font-size:14px;color:var(--gold);"></i> تفاصيل العربون</div>
+    <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);">
+        <span>العربون المدفوع من العميل</span>
+        <span style="color:var(--text);font-weight:500;">${b.deposit.toLocaleString()} ريال ${b.depositPaid?'<span class="badge badge-green" style="font-size:9px;padding:1px 6px;">مدفوع</span>':'<span class="badge badge-red" style="font-size:9px;padding:1px 6px;">غير مدفوع</span>'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);">
+        <span>عمولة التطبيق (${commissionRate}%)</span>
+        <span style="color:#B71C1C;font-weight:500;">- ${commissionAmount.toLocaleString()} ريال</span>
+      </div>
+      <div style="height:0.5px;background:var(--border);margin:2px 0;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;">
+        <span style="font-weight:600;color:var(--text);">صافي العربون المستحق للمصور</span>
+        <span style="font-weight:700;color:var(--green);">${netDeposit.toLocaleString()} ريال</span>
+      </div>
+    </div>
+
+    <div class="admin-section-title"><i class="ti ti-wallet" style="font-size:14px;color:var(--gold);"></i> الدفعة النهائية ومحفظة المصور</div>
+    <div class="admin-row" style="flex-direction:column;align-items:stretch;gap:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);">
+        <span>الدفعة النهائية من العميل</span>
+        <span style="color:var(--text);font-weight:500;">${b.remaining.toLocaleString()} ريال ${b.remainingPaid?'<span class="badge badge-green" style="font-size:9px;padding:1px 6px;">مدفوعة</span>':'<span class="badge badge-orange" style="font-size:9px;padding:1px 6px;">لم تُدفع بعد</span>'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text2);">
+        <span>حالة المبلغ في محفظة المصور</span>
+        <span>${
+          b.payoutStatus==='released'
+            ? '<span class="badge badge-green" style="font-size:10px;padding:2px 8px;"><i class="ti ti-check"></i> تم التحويل للمصور</span>'
+            : b.payoutStatus==='held'
+              ? '<span class="badge badge-purple" style="font-size:10px;padding:2px 8px;"><i class="ti ti-wallet"></i> محجوز — بانتظار انتهاء الجلسة</span>'
+              : '<span class="badge badge-orange" style="font-size:10px;padding:2px 8px;">بانتظار الدفعة النهائية</span>'
+        }</span>
+      </div>
+      ${b.remainingPaid && b.payoutStatus==='held' ? `
+      <button class="admin-mini-btn approve" style="align-self:flex-start;margin-top:4px;" onclick="adminReleasePayout(${b.id})">
+        <i class="ti ti-send"></i> الإفراج عن المبلغ وتحويله للمصور
+      </button>` : ''}
+    </div>
+
+    <div class="admin-section-title"><i class="ti ti-message-circle" style="font-size:14px;color:var(--gold);"></i> المحادثة بين العميل والمصور</div>
+    <div id="adminChatViewBody" class="chat-messages" style="min-height:0;padding:12px;background:var(--dark3);border-radius:var(--radius);"></div>
+  `;
+  const msgs = adminChatMessages[bookingId] || [];
+  const chatBody = document.getElementById('adminChatViewBody');
+  chatBody.innerHTML = msgs.length ? msgs.map(m=>`
+    <div class="chat-bubble-wrap ${m.from==='client'?'me':'them'}">
+      <div class="chat-bubble">${m.text}</div>
+      <div class="chat-time">${m.from==='client'?'العميل':'المصور'} · ${m.time}</div>
+    </div>`).join('') : `<div class="admin-empty" style="padding:20px 10px;">لا توجد رسائل بعد بين الطرفين</div>`;
+  document.getElementById('adminBookingDetailsOverlay').style.display = 'flex';
+}
+
+function closeAdminBookingDetails(){
+  document.getElementById('adminBookingDetailsOverlay').style.display = 'none';
+}
+
+function adminReleasePayout(bookingId){
+  const b = adminBookingsData.find(x=>x.id===bookingId);
+  if(!b || !b.remainingPaid || b.payoutStatus!=='held') return;
+  b.payoutStatus = 'released';
+  if(b.status==='confirmed') b.status = 'completed';
+  adminRecentActivity.unshift({icon:'ti-send', text:`تم تحويل الدفعة النهائية لـ${b.photographer} عن حجز ${b.client}`, time:'الآن'});
+  persistToDB();
+  renderAdminBookings();
+  renderAdminOverview();
+  renderAdminPayments();
+  openAdminBookingDetails(bookingId);
+}
+
+/* ---------- PAYMENTS ---------- */
+function renderAdminPayments(){
+  const paidTotal = adminPaymentsData.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amount,0);
+  const refundedTotal = adminPaymentsData.filter(p=>p.status==='refunded').reduce((s,p)=>s+p.amount,0);
+  const heldTotal = adminBookingsData.filter(b=>b.payoutStatus==='held').reduce((s,b)=>s+b.remaining,0);
+  document.getElementById('adminPaidTotal').textContent = paidTotal.toLocaleString()+' ر';
+  document.getElementById('adminRefundedTotal').textContent = refundedTotal.toLocaleString()+' ر';
+  document.getElementById('adminHeldTotal').textContent = heldTotal.toLocaleString()+' ر';
+
+  const typeLabel = {deposit:'عربون', remaining:'دفعة نهائية'};
+  const container = document.getElementById('adminPaymentsList');
+  container.innerHTML = adminPaymentsData.map(p=>`
+    <div class="admin-row">
+      <div class="admin-row-avatar"><i class="ti ti-receipt"></i></div>
+      <div class="admin-row-body">
+        <div class="admin-row-name">${p.client} ← ${p.photographer} <span class="badge badge-purple" style="font-size:9px;padding:1px 6px;margin-right:4px;">${typeLabel[p.type]||'دفعة'}</span></div>
+        <div class="admin-row-sub">${adminInvoiceNumber(p)} · ${p.date} · ${p.amount.toLocaleString()} ريال ${p.status==='refunded'?'· مسترد':''}</div>
+      </div>
+      <div class="admin-row-actions">
+        <button class="admin-mini-btn view" onclick="openAdminInvoice(${p.id})"><i class="ti ti-file-invoice"></i> الفاتورة</button>
+        <button class="admin-mini-btn view" onclick="openAdminBookingDetails(${p.bookingId})"><i class="ti ti-eye"></i> التفاصيل</button>
+        ${p.status==='paid'
+          ? `<button class="admin-mini-btn block" onclick="adminRefundPayment(${p.id})"><i class="ti ti-rotate-2"></i> استرداد</button>`
+          : `<span class="badge badge-orange" style="font-size:10px;padding:2px 7px;">مسترد</span>`}
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- INVOICE ---------- */
+function adminInvoiceNumber(p){
+  return 'INV-2026-'+String(p.id).padStart(4,'0');
+}
+
+function openAdminInvoice(paymentId){
+  const p = adminPaymentsData.find(x=>x.id===paymentId);
+  if(!p) return;
+  const b = adminBookingsData.find(x=>x.id===p.bookingId);
+  const vatRate = 0.15;
+  const total = p.amount;
+  const subtotal = total/(1+vatRate);
+  const vat = total-subtotal;
+  const statusLabel = p.status==='refunded' ? 'مسترد' : 'مدفوع';
+  const statusStyle = p.status==='refunded' ? 'background:rgba(230,81,0,0.12);color:#BF360C;' : 'background:rgba(46,125,50,0.12);color:#1B5E20;';
+
+  document.getElementById('adminInvoiceBody').innerHTML = `
+    <div class="invoice-head">
+      <div>
+        <div class="invoice-brand">أثير</div>
+        <div class="invoice-brand-sub">ATHEER — فاتورة ضريبية مبسطة</div>
+      </div>
+      <div class="invoice-meta">
+        <div class="invoice-meta-num">${adminInvoiceNumber(p)}</div>
+        <div class="invoice-meta-date">${p.date}</div>
+        <span class="invoice-status" style="${statusStyle}">${statusLabel}</span>
+      </div>
+    </div>
+
+    <div class="invoice-parties">
+      <div>
+        <div class="invoice-party-label">فاتورة إلى (العميل)</div>
+        <div class="invoice-party-name">${p.client}</div>
+        <div class="invoice-party-role">عميل</div>
+      </div>
+      <div>
+        <div class="invoice-party-label">مقدّم الخدمة (المصور)</div>
+        <div class="invoice-party-name">${p.photographer}</div>
+        <div class="invoice-party-role">مصور مستقل عبر أثير</div>
+      </div>
+    </div>
+
+    <table class="invoice-table">
+      <thead><tr><th>الوصف</th><th style="text-align:left;">المبلغ</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>جلسة تصوير${b?` — ${b.date} · ${b.time}`:''}</td>
+          <td style="text-align:left;">${subtotal.toLocaleString(undefined,{maximumFractionDigits:2})} ريال</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="invoice-totals">
+      <div class="invoice-totals-row"><span>المجموع الفرعي</span><span>${subtotal.toLocaleString(undefined,{maximumFractionDigits:2})} ريال</span></div>
+      <div class="invoice-totals-row"><span>ضريبة القيمة المضافة (15%)</span><span>${vat.toLocaleString(undefined,{maximumFractionDigits:2})} ريال</span></div>
+      <div class="invoice-totals-row grand"><span>الإجمالي</span><span>${total.toLocaleString()} ريال</span></div>
+    </div>
+
+    <div class="invoice-foot">
+      تم الدفع عبر وسيلة دفع إلكترونية داخل تطبيق أثير · هذه الفاتورة صادرة إلكترونياً ولا تتطلب توقيعاً<br>
+      للاستفسارات تواصل معنا عبر الدعم داخل التطبيق
+    </div>`;
+
+  document.getElementById('adminInvoiceOverlay').style.display = 'flex';
+}
+
+function closeAdminInvoice(){
+  document.getElementById('adminInvoiceOverlay').style.display = 'none';
+}
+
+function adminRefundPayment(id){
+  const p = adminPaymentsData.find(x=>x.id===id);
+  if(!p) return;
+  p.status = 'refunded';
+  persistToDB();
+  renderAdminPayments();
+}
+
+/* ---------- SUPPORT / COMPLAINTS ---------- */
+function renderAdminSupport(){
+  const container = document.getElementById('adminSupportList');
+  if(!adminComplaintsData.length){ container.innerHTML = `<div class="admin-empty">لا توجد شكاوى</div>`; return; }
+  const statusBadge = {
+    open: '<span class="badge badge-orange" style="font-size:10px;padding:2px 7px;">مفتوحة</span>',
+    replied: '<span class="badge badge-gold" style="font-size:10px;padding:2px 7px;">تم الرد</span>',
+    resolved: '<span class="badge badge-green" style="font-size:10px;padding:2px 7px;">تم الحل</span>',
+  };
+  container.innerHTML = adminComplaintsData.map(c=>`
+    <div class="admin-row" style="align-items:flex-start;flex-direction:column;">
+      <div style="display:flex;width:100%;align-items:flex-start;">
+        <div class="admin-row-avatar"><i class="ti ti-message-report"></i></div>
+        <div class="admin-row-body">
+          <div class="admin-row-name">${c.subject} ${statusBadge[c.status] || ''}</div>
+          <div class="admin-row-sub">${c.from} (${c.role}) · ${c.date}</div>
+          <div class="admin-row-sub" style="margin-top:4px;">${c.desc}</div>
+          ${c.reply ? `<div class="admin-row-sub" style="margin-top:6px;color:var(--gold);"><i class="ti ti-corner-up-left"></i> ردك: ${c.reply}</div>` : ''}
+        </div>
+        <div class="admin-row-actions">
+          ${c.status!=='resolved' ? `<button class="admin-mini-btn approve" onclick="adminResolveComplaint(${c.id})"><i class="ti ti-check"></i> حل</button>` : ''}
+        </div>
+      </div>
+      ${c.status!=='resolved' ? `
+      <div style="display:flex;gap:6px;width:100%;margin-top:10px;padding-right:46px;box-sizing:border-box;">
+        <input type="text" class="admin-reply-input" id="replyInput-${c.id}" placeholder="اكتب ردك على ${c.role==='مصور'?'المصور':'العميل'}..." style="flex:1;padding:9px 12px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);font-family:'Tajawal',sans-serif;font-size:12.5px;color:var(--text);outline:none;">
+        <button class="admin-mini-btn block" onclick="adminReplyComplaint(${c.id})" title="إرسال الرد"><i class="ti ti-send"></i></button>
+      </div>` : ''}
+    </div>`).join('');
+}
+
+function adminReplyComplaint(id){
+  const input = document.getElementById('replyInput-'+id);
+  if(!input) return;
+  const text = input.value.trim();
+  if(!text){ alert('يرجى كتابة نص الرد أولاً'); return; }
+  const c = adminComplaintsData.find(x=>x.id===id);
+  if(!c) return;
+  c.reply = text;
+  if(c.status==='open') c.status='replied';
+  persistToDB();
+  renderAdminSupport();
+  renderAdminOverview();
+}
+
+function adminResolveComplaint(id){
+  const c = adminComplaintsData.find(x=>x.id===id);
+  if(!c) return;
+  c.status = 'resolved';
+  persistToDB();
+  renderAdminSupport();
+  renderAdminOverview();
+}
+
+function applyPolicyTexts(){
+  const cancelEl = document.getElementById('faqCancelPolicyAnswer');
+  if(cancelEl) cancelEl.textContent = adminSettings.cancelPolicy;
+  const termsEl = document.getElementById('faqTermsAnswer');
+  if(termsEl) termsEl.textContent = adminSettings.terms;
+  const privacyEl = document.getElementById('faqPrivacyAnswer');
+  if(privacyEl) privacyEl.textContent = adminSettings.privacy;
+  const faqCommEl = document.getElementById('faqCommissionAnswer');
+  if(faqCommEl) faqCommEl.textContent = `تُحوّل الأموال خلال 48 ساعة من إتمام الجلسة وتأكيد العميل. تُطرح عمولة المنصة (${adminSettings.commissionRate}%) تلقائياً قبل التحويل.`;
+}
+
+/* ---------- SETTINGS: COMMISSION & POLICY ---------- */
+function renderAdminSettings(){
+  document.getElementById('adminCommissionValue').textContent = adminSettings.commissionRate + '%';
+  document.getElementById('adminCommissionSlider').value = adminSettings.commissionRate;
+  document.getElementById('adminCommissionExample').textContent = Math.round(2500 * adminSettings.commissionRate / 100).toLocaleString() + ' ريال';
+  document.getElementById('adminCancelPolicyText').value = adminSettings.cancelPolicy;
+  document.getElementById('adminTermsText').value = adminSettings.terms;
+  document.getElementById('adminPrivacyText').value = adminSettings.privacy;
+}
+
+function adminSetCommission(val){
+  let v = Math.max(0, Math.min(30, Number(val)));
+  adminSettings.commissionRate = v;
+  document.getElementById('adminCommissionValue').textContent = v + '%';
+  document.getElementById('adminCommissionSlider').value = v;
+  document.getElementById('adminCommissionExample').textContent = Math.round(2500 * v / 100).toLocaleString() + ' ريال';
+  persistToDB();
+  // نشر التغيير فوراً (يقرأها الموقع الرسمي من AtheerDB أيضاً)
+  applyPolicyTexts();
+}
+
+function adminChangeCommission(delta){
+  adminSetCommission(adminSettings.commissionRate + delta);
+}
+
+function adminSaveSettings(){
+  adminSettings.cancelPolicy = document.getElementById('adminCancelPolicyText').value.trim();
+  adminSettings.terms = document.getElementById('adminTermsText').value.trim();
+  adminSettings.privacy = document.getElementById('adminPrivacyText').value.trim();
+  persistToDB();
+  // عكس كل السياسات (الإلغاء، الشروط، الخصوصية، العمولة) فوراً على الموقع الرسمي عبر AtheerDB
+  applyPolicyTexts();
+
+  const msg = document.getElementById('adminSettingsSavedMsg');
+  msg.style.display = 'block';
+  setTimeout(()=>{ msg.style.display = 'none'; }, 2500);
+  renderAdminBookings();
+  renderAdminOverview();
+  renderAdminPhotographers();
+}
+
+/* ============================================================
+   ADMIN AUTH (منفصل تماماً عن حسابات العملاء/المصورين بالموقع)
+   ============================================================ */
+function attemptAdminLogin(){
+  const email = document.getElementById('adminLoginEmail').value.trim();
+  const pass = document.getElementById('adminLoginPassword').value;
+  const errEl = document.getElementById('adminLoginErr');
+  errEl.style.display='none';
+  if(!email || !pass){
+    errEl.textContent = 'يرجى تعبئة البريد وكلمة المرور';
+    errEl.style.display='block';
+    return;
+  }
+  (async () => {
+    try{
+      const { profile } = await AtheerAPI.login(email, pass);
+      if(!profile || profile.role !== 'admin'){
+        errEl.textContent = 'هذا الحساب ليس حساب مشرف';
+        errEl.style.display='block';
+        await AtheerAPI.logout();
+        return;
+      }
+      showAdminPanel();
+    }catch(err){
+      errEl.textContent = 'البريد أو كلمة المرور غير صحيحة';
+      errEl.style.display='block';
+    }
+  })();
+}
+
+function showAdminPanel(){
+  document.getElementById('adminLoginScreen').classList.remove('active');
+  document.getElementById('adminPanel').classList.add('active');
+  loadFromDB();
+  renderAdminAll();
+}
+
+function adminLogout(){
+  if(typeof AtheerAPI !== 'undefined') AtheerAPI.logout();
+  try{ sessionStorage.removeItem('atheer_admin_session'); }catch(e){}
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('adminLoginScreen').classList.add('active');
+  document.getElementById('adminLoginEmail').value='';
+  document.getElementById('adminLoginPassword').value='';
+}
+
+// تحديث لوحة الإدارة تلقائياً إذا تغيّرت البيانات من الموقع الرسمي (نفس المتصفح، تبويب/ملف آخر على نفس الدومين)
+function onAtheerDBChanged(){
+  if(document.getElementById('adminPanel').classList.contains('active')){
+    loadFromDB();
+    renderAdminAll();
+  }
+}
+
+// جلسة إدارية سابقة بنفس المتصفح؟ ادخل مباشرة بدون طلب تسجيل الدخول من جديد
+try{
+  if(sessionStorage.getItem('atheer_admin_session')==='1'){ showAdminPanel(); }
+}catch(e){}
+</script>
+</body>
+</html>
